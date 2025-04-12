@@ -2,17 +2,82 @@
 @tailwind components;
 @tailwind utilities;
 
-input[type='number'] {
+input[type="number"] {
   -moz-appearance: textfield;
   appearance: textfield;
 }
 
-input[type='number']::-webkit-inner-spin-button {
+input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
-input[type='number']::-webkit-outer-spin-button {
+input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+.text-blueGray-100 {
+  --tw-text-opacity: 1;
+  color: rgba(241, 245, 249, var(--tw-text-opacity));
+}
+
+.text-blueGray-200 {
+  --tw-text-opacity: 1;
+  color: rgba(226, 232, 240, var(--tw-text-opacity));
+}
+
+.text-blueGray-300 {
+  --tw-text-opacity: 1;
+  color: rgba(203, 213, 225, var(--tw-text-opacity));
+}
+
+.text-blueGray-400 {
+  --tw-text-opacity: 1;
+  color: rgba(148, 163, 184, var(--tw-text-opacity));
+}
+
+.text-blueGray-500 {
+  --tw-text-opacity: 1;
+  color: rgba(100, 116, 139, var(--tw-text-opacity));
+}
+
+.text-blueGray-600 {
+  --tw-text-opacity: 1;
+  color: rgba(71, 85, 105, var(--tw-text-opacity));
+}
+
+.text-blueGray-700 {
+  --tw-text-opacity: 1;
+  color: rgba(51, 65, 85, var(--tw-text-opacity));
+}
+
+.text-blueGray-800 {
+  --tw-text-opacity: 1;
+  color: rgba(30, 41, 59, var(--tw-text-opacity));
+}
+
+.hover\:text-lightBlue-600:hover {
+  --tw-text-opacity: 1;
+  color: rgba(2, 132, 199, var(--tw-text-opacity));
+}
+
+.hover\:text-blueGray-300:hover {
+  --tw-text-opacity: 1;
+  color: rgba(203, 213, 225, var(--tw-text-opacity));
+}
+
+.hover\:text-blu eGray-500:hover {
+  --tw-text-opacity: 1;
+  color: rgba(100, 116, 139, var(--tw-text-opacity));
+}
+
+.hover\:text-blueGray-700:hover {
+  --tw-text-opacity: 1;
+  color: rgba(51, 65, 85, var(--tw-text-opacity));
+}
+
+.hover\:text-blueGray-800:hover {
+  --tw-text-opacity: 1;
+  color: rgba(30, 41, 59, var(--tw-text-opacity));
 }
