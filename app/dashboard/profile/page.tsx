@@ -1,9 +1,36 @@
 "use client";
 import { useUser, useStackApp, UserButton } from "@stackframe/stack";
+import { toBase64 } from "@/app/lib/utils";
 
 export default function PageClient() {
   const user = useUser();
   const app = useStackApp();
+
+  const handleImageUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const user = useUser({ or: "redirect" });
+    const team = user?.useTeam("ac0a0072-f41c-4703-ab63-0983b54823d2");
+
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 100 * 1024) {
+      alert("La imagen debe pesar menos de 100KB");
+      return;
+    }
+
+    const base64 = await toBase64(file);
+
+    if (!team) {
+      console.error("Team is null, cannot update team profile.");
+      return;
+    }
+
+    await team.update({
+      profileImageUrl: base64,
+    });
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
@@ -24,6 +51,7 @@ export default function PageClient() {
               Sign Out
             </button>
           </div>
+          <input type="file" accept="image/*" onChange={handleImageUpload} />
         </div>
       ) : (
         <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">

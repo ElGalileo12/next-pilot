@@ -1,8 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { useUser, SelectedTeamSwitcher } from "@stackframe/stack";
+import { useEffect, useState } from "react";
+import Image from "next/image";
+import { useUser } from "@stackframe/stack";
 import TableUser from "@/app/components/TableUsers";
+import getUsersTeam from "@/app/lib/actions";
+import { TeamMembersSkeleton } from "@/app/ui/skeletons";
 
 export default function TeamManagementPanel() {
   const user = useUser();
@@ -11,10 +14,24 @@ export default function TeamManagementPanel() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [dataTeam, setDataTeam] = useState<any[]>([]);
 
-  const [displayName, setDisplayName] = useState(user?.displayName || "");
-  const [userEmail, setUserEmail] = useState(user?.email || "");
-  const [password, setPassword] = useState("");
+  const fetchUsers = async () => {
+    try {
+      if (!team) {
+        console.error("No team selected.");
+        return;
+      }
+      const data = await getUsersTeam(team.id);
+      setDataTeam(data.items);
+    } catch (error) {
+      console.error("Error al obtener usuarios del equipo:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, [user]);
 
   const handleInvite = async () => {
     if (!email) return setMessage("Debes ingresar un correo válido.");
@@ -39,46 +56,26 @@ export default function TeamManagementPanel() {
     }
   };
 
-  const handleUpdateProfile = async () => {
-    console.log("Actualización de perfil (simulado)", {
-      displayName,
-      userEmail,
-      password,
-    });
-    // Aquí iría la lógica real de actualización si Stack lo permite.
-  };
-
-  const handleRemoveFromTeam = async () => {
-    try {
-      setLoading(true);
-      setMessage(null);
-
-      if (!team) return setMessage("No estás en un equipo.");
-
-      //  await team.removeUser(user!.id);
-      setMessage("Has sido eliminado del equipo.");
-    } catch (error) {
-      console.error(error);
-      setMessage("No se pudo eliminar del equipo.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
-    <main className="flex flex-col min-h-screen w-full bg-gray-100 p-6 gap-6">
+    <section className="flex flex-col min-h-screen w-full  p-6 gap-6">
       <header className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Panel de Gestión de Usuario</h1>
-        <SelectedTeamSwitcher />
+        <div className="flex items-center justify-between border rounded-lg p-2 shadow-sm w-1/3 max-w-sm bg-white">
+          <div className="flex items-center space-x-5">
+            <Image
+              width={28}
+              height={28}
+              src={team?.profileImageUrl || "/default-team-logo.png"}
+              alt="Team Logo"
+              className="object-cover rounded-md"
+            />
+            <span className="text-sm font-medium text-gray-900">
+              {team?.displayName || "Sin equipo"}
+            </span>
+          </div>
+        </div>
       </header>
 
-   {/*    <seCtion className="mb-4"> */}
-
-      <section>
-        <TableUser />
-      </section>
-
-      {/* Card 1: Invitación */}
       <div className="bg-white rounded-lg shadow p-6">
         <h2 className="text-xl font-semibold mb-4">
           Invitar usuario al equipo
@@ -103,49 +100,15 @@ export default function TeamManagementPanel() {
         {message && <p className="mt-4 text-sm text-center">{message}</p>}
       </div>
 
-      {/* Card 2: Editar Usuario */}
       <div className="bg-white rounded-lg shadow p-6">
         <h2 className="text-xl font-semibold mb-4">Editar Usuario</h2>
-        <input
-          type="text"
-          value={displayName}
-          onChange={(e) => setDisplayName(e.target.value)}
-          placeholder="Nombre"
-          className="w-full border border-gray-300 rounded-md p-2 mb-4"
-        />
-        <input
-          type="email"
-          value={userEmail}
-          onChange={(e) => setUserEmail(e.target.value)}
-          placeholder="Correo"
-          className="w-full border border-gray-300 rounded-md p-2 mb-4"
-        />
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Nueva contraseña"
-          className="w-full border border-gray-300 rounded-md p-2 mb-4"
-        />
-        <button
-          onClick={handleUpdateProfile}
-          className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-md"
-        >
-          Guardar cambios
-        </button>
-      </div>
 
-      {/* Card 3: Eliminar Usuario */}
-      <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-xl font-semibold mb-4">Eliminar del equipo</h2>
-        <button
-          onClick={handleRemoveFromTeam}
-          disabled={loading}
-          className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-md"
-        >
-          Eliminarme del equipo
-        </button>
+        {dataTeam && dataTeam?.length > 0 ? (
+          <TableUser getUsersTeam={dataTeam} />
+        ) : (
+          <TeamMembersSkeleton />
+        )}
       </div>
-    </main>
+    </section>
   );
 }

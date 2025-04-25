@@ -1,10 +1,10 @@
 "use server";
 
+import axios from "axios";
 import postgres from "postgres";
 import { z } from "zod";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { stackServerApp } from "@/stack";
 
 const FormSchema = z.object({
   id: z.string(),
@@ -108,10 +108,18 @@ export async function deleteInvoice(id: string) {
   revalidatePath("/dashboard/invoices");
 }
 
-/* export default async function getUsersTeam() {
-  const user = await stackServerApp.getUser();
-  const members = await user?.listUsers();
-  
-  console.log("User", user);
+export default async function getUsersTeam(teamId: string) {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL;
+
+    const response = await axios.get(`${baseUrl}/api/usuarios?teamId=${teamId}`);
+    return response.data;
+
+  } catch (error: any) {
+    console.error(
+      "Error al obtener usuarios del equipo:",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
 }
- */

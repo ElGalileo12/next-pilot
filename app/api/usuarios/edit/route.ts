@@ -6,7 +6,7 @@ export async function PATCH(request: Request) {
 
   // Asegúrate de que los datos están en el cuerpo de la solicitud
   const { display_name, profile_image_url } = body; // Obtener los valores dinámicamente del cuerpo
-  const userId = body.userId; // También puedes recibir userId como parámetro si es necesario
+  const userId = "3adb6a6f-e7cd-4324-9467-03016d98ecb8"; // También puedes recibir userId como parámetro si es necesario
   const teamId = "ac0a0072-f41c-4703-ab63-0983b54823d2"; // O recibirlo también desde el cuerpo si es necesario
 
   if (!display_name || !userId) {

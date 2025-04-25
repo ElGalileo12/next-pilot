@@ -1,6 +1,4 @@
-import { useUser } from "@stackframe/stack";
 import { useEffect, useState } from "react";
-import { toBase64 } from "@/app/lib/utils";
 
 type Team = {
   displayName: string | null;
@@ -14,82 +12,41 @@ type Member = {
   roles: string[];
 };
 
-type LocalTeamUser = {
-  id: string;
-  email: string;
-  roles: string[];
-  teamProfile?: {
-    displayName: string;
-    profileImageUrl: string | null;
-  };
+type TableUserProps = {
+  getUsersTeam: any;
 };
 
-export default function TableUser() {
-  const user = useUser({ or: "redirect" });
+export default function TableUser({ getUsersTeam }: TableUserProps) {
   const [members, setMembers] = useState<Member[]>([]);
   const [loading, setLoading] = useState(true);
-
-  const team = user?.useTeam("ac0a0072-f41c-4703-ab63-0983b54823d2");
-  console.log(team?.useUsers());
-  const users: LocalTeamUser[] | undefined = team?.useUsers() as
-    | LocalTeamUser[]
-    | undefined;
-
-  const teamProfile = team ? user.useTeamProfile(team) : null;
 
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  /*   const listaUsuarios = team?.listUsers(); */
-
   useEffect(() => {
-    if (!users || users.length === 0) return;
-    
-  
+    fetchTeamUsers();
+  }, []);
 
-    /* 
-    listaUsuarios?.then((users) => {
-      users.forEach((user) => {
-        console.log(user);
-      });
-    }); */
+  const fetchTeamUsers = async () => {
+    try {
+      console.log(getUsersTeam, "getUsersTeam");
 
-    setMembers(
-      users.map((user: LocalTeamUser) => ({
-        id: user.id,
+      const mappedMembers: Member[] = getUsersTeam.map((user: any) => ({
+        id: user.user_id,
         teamProfileId: {
-          displayName: user.teamProfile?.displayName || "Sin nombre",
-          profileImageUrl: user.teamProfile?.profileImageUrl || null,
+          displayName: user.display_name || "Sin nombre",
+          profileImageUrl: user.profile_image_url || null,
         },
-        email: user.email || "Sin correo",
-        roles: user.roles || [],
-      }))
-    );
+        email: user.user.primary_email || "Sin correo",
+      }));
+      console.log("mappedMembers", mappedMembers);
 
-    setLoading(false);
-  }, [users?.length]);
-
-  const handleImageUpload = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    if (file.size > 100 * 1024) {
-      alert("La imagen debe pesar menos de 100KB");
-      return;
+      setMembers(mappedMembers);
+    } catch (error) {
+      console.error("Error al cargar miembros del equipo", error);
+    } finally {
+      setLoading(false);
     }
-
-    const base64 = await toBase64(file);
-
-    if (!team) {
-      console.error("Team is null, cannot update team profile.");
-      return;
-    }
-
-    await team.update({
-      profileImageUrl: base64,
-    });
   };
 
   const openModal = (member: Member) => {
@@ -123,14 +80,11 @@ export default function TableUser() {
                 selectedMember.teamProfileId.profileImageUrl ||
                 "default-image.jpg"
               }
-              //alt={selectedMember.teamProfileId.displayName}
+              alt={selectedMember.id}
               className="w-24 h-24 object-cover rounded-full mx-auto mb-4"
             />
             <p className="text-sm text-gray-700">
               Email: {selectedMember.email}
-            </p>
-            <p className="text-sm text-gray-700">
-              Roles: {selectedMember.roles.join(", ")}
             </p>
           </div>
         </div>
@@ -146,20 +100,16 @@ export default function TableUser() {
             >
               <p className="font-medium">{member.teamProfileId.displayName}</p>
               <p className="text-sm text-gray-600">{member.email}</p>
-              <p className="text-xs text-gray-500">
-                Roles: {member.roles.join(", ")}
-              </p>
               <img
                 src={
                   member.teamProfileId.profileImageUrl || "default-image.jpg"
                 }
-                //alt={member.teamProfileId.displayName}
+                alt={member.id}
                 className="w-12 h-12 object-cover rounded-full mt-2"
               />
             </li>
           ))}
         </ul>
-        <input type="file" accept="image/*" onChange={handleImageUpload} />
       </div>
     </>
   );
