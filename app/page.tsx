@@ -24,7 +24,7 @@ export default function Page() {
             </div>
             <div className="flex justify-start mt-4">
               <Link
-                href="/signin"
+                href="/auth/signin"
                 className="flex items-center gap-5 self-start rounded-lg bg-sky-950 px-14 py-2.5 text-sm font-medium text-white transition-colors hover:bg-sky-950 md:text-base"
               >
                 <span>Log in</span> <ArrowRightIcon className="w-5 md:w-5" />

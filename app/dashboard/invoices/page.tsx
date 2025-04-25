@@ -6,10 +6,10 @@ import { CreateInvoice } from "@/app/ui/invoices/buttons";
 import { lusitana } from "@/app/ui/fonts";
 import { Suspense } from "react";
 import { InvoicesTableSkeleton } from "@/app/ui/skeletons";
-import { Metadata } from 'next';
+import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: 'Invoices | Acme Dashboard',
+  title: "Invoices | Acme Dashboard",
 };
 
 export default async function Page(props: {

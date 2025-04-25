@@ -1,6 +1,5 @@
 import { montserrat } from "./ui/fonts";
-import { StackProvider, StackTheme } from "@stackframe/stack";
-import { stackServerApp } from "../stack";
+import { StackProvider, StackTheme, StackClientApp } from "@stackframe/stack";
 import { Metadata } from "next";
 import "./ui/global.css";
 
@@ -10,6 +9,15 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://next-learn-dashboard.vercel.sh"),
 };
 
+const stackClientApp = new StackClientApp({
+  projectId: process.env.NEXT_PUBLIC_STACK_PROJECT_ID!,
+  urls: {
+    afterSignUp: "/dashboard/profile", 
+    afterSignIn: "/dashboard", 
+  },
+  tokenStore: "nextjs-cookie", 
+});
+
 export default function RootLayout({
   children,
 }: {
@@ -18,10 +26,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${montserrat.className} antialiased`}>
-        <StackProvider app={stackServerApp}>
-          <StackTheme>
-            {children}
-          </StackTheme>
+        <StackProvider app={stackClientApp}>
+          <StackTheme>{children}</StackTheme>
         </StackProvider>
       </body>
     </html>

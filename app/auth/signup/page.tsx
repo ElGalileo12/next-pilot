@@ -1,7 +1,9 @@
 "use client";
-import axios, { AxiosError } from "axios";
+
 import { useState } from "react";
 import PasswordField from "@/app/components/PasswordField";
+import Link from "next/link";
+import { useUser, useStackApp } from "@stackframe/stack";
 
 export default function CustomCredentialSignIn() {
   const [username, setUsername] = useState("");
@@ -9,38 +11,22 @@ export default function CustomCredentialSignIn() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
-  const [register, setRegister] = useState(false);
+  const app = useStackApp();
 
-  const onRegister = async () => {
+  const onSubmit = async () => {
     if (password !== confirmPassword) {
       setError("Las contraseñas no coinciden");
       return;
     }
 
     if (!password) return setError("Por favor ingresa la contraseña");
+    const result = await app.signUpWithCredential({ email, password });
+    if (result.status === "error") setError(result.error.message);
 
-    try {
-      const result = await axios.post("/api/auth/signup", {
-        username: username,
-        email: email,
-        password: password,
-      });
-
-      console.log(result);
-    } catch (error) {
-      console.log(error);
-
-      if (error instanceof AxiosError) {
-        setError(error.response?.data.error || "Error del servidor");
-      }
+    const user = useUser();
+    if (user) {
+      await user.update({ displayName: username });
     }
-  };
-
-  const clearForm = () => {
-    setEmail("");
-    setPassword("");
-    setConfirmPassword("");
-    setError("");
   };
 
   return (
@@ -56,7 +42,7 @@ export default function CustomCredentialSignIn() {
                 className="space-y-4 md:space-y-6"
                 onSubmit={(e) => {
                   e.preventDefault();
-                  onRegister();
+                  onSubmit();
                 }}
               >
                 <div>
@@ -112,20 +98,17 @@ export default function CustomCredentialSignIn() {
                   type="submit"
                   className="text-white w-full bg-sky-900 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5"
                 >
-                  {register ? "Registrarse" : "Iniciar sesión"}
+                  Registrarse
                 </button>
 
                 <p className="text-sm font-light text-gray-500">
                   ¿Ya tienes una cuenta?
-                  <button
-                    type="button"
-                    onClick={() => {
-                      clearForm(), setRegister(!register);
-                    }}
-                    className="ml-1 text-blue-600 hover:underline"
+                  <Link
+                    href="/auth/signin"
+                    className="text-sky-900 hover:underline"
                   >
-                    Inicia sesión
-                  </button>
+                    <span> Inicia sesión</span>
+                  </Link>
                 </p>
               </form>
             </div>
