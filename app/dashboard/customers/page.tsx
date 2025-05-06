@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useUser } from "@stackframe/stack";
 import TableUser from "@/app/components/TableUsers";
-import getUsersTeam from "@/app/lib/actions";
+import { getUsersTeam, getTeamInvitations, deleteTeamInvitation } from "@/app/lib/actions";
 import { TeamMembersSkeleton } from "@/app/ui/skeletons";
 
 export default function TeamManagementPanel() {
@@ -101,7 +101,7 @@ export default function TeamManagementPanel() {
       </div>
 
       <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-xl font-semibold mb-4">Editar Usuario</h2>
+        <h2 className="text-xl font-semibold mb-4">Editar Usuario </h2>
 
         {dataTeam && dataTeam?.length > 0 ? (
           <TableUser getUsersTeam={dataTeam} />

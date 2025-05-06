@@ -29,8 +29,6 @@ export default function TableUser({ getUsersTeam }: TableUserProps) {
 
   const fetchTeamUsers = async () => {
     try {
-      console.log(getUsersTeam, "getUsersTeam");
-
       const mappedMembers: Member[] = getUsersTeam.map((user: any) => ({
         id: user.user_id,
         teamProfileId: {
