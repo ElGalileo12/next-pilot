@@ -1,6 +1,6 @@
 // Loading animation
 const shimmer =
-  'before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/60 before:to-transparent';
+  "before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/60 before:to-transparent";
 
 export function CardSkeleton() {
   return (
@@ -213,6 +213,29 @@ export function InvoicesTableSkeleton() {
           </table>
         </div>
       </div>
+    </div>
+  );
+}
+
+export function TeamMembersSkeleton() {
+ return (
+    <div className="p-4 bg-white shadow rounded-lg w-full max-w-2xl mx-auto animate-pulse">
+      <div className="h-6 w-1/3 bg-gray-200 rounded mb-4" />
+
+      <ul className="space-y-2">
+        {[...Array(5)].map((_, i) => (
+          <li
+            key={i}
+            className="flex flex-row justify-between items-center border-b pb-2"
+          >
+            <div className="flex-1">
+              <div className="h-4 w-32 bg-gray-200 rounded mb-2" />
+              <div className="h-4 w-40 bg-gray-100 rounded" />
+            </div>
+            <div className="w-12 h-12 bg-gray-200 rounded-full mt-2" />
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

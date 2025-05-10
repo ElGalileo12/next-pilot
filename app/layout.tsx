@@ -1,5 +1,22 @@
-import { montserrat } from './ui/fonts';
-import './ui/global.css';
+import { montserrat } from "./ui/fonts";
+import { StackProvider, StackTheme, StackClientApp } from "@stackframe/stack";
+import { Metadata } from "next";
+import "./ui/global.css";
+
+export const metadata: Metadata = {
+  title: "Acme Dashboard",
+  description: "The official Next.js Course Dashboard, built with App Router.",
+  metadataBase: new URL("https://next-learn-dashboard.vercel.sh"),
+};
+
+const stackClientApp = new StackClientApp({
+  projectId: process.env.NEXT_PUBLIC_STACK_PROJECT_ID!,
+  urls: {
+    afterSignUp: "/dashboard/profile", 
+    afterSignIn: "/dashboard", 
+  },
+  tokenStore: "nextjs-cookie", 
+});
 
 export default function RootLayout({
   children,
@@ -9,10 +26,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${montserrat.className} antialiased`}>
-        {children}
-        <footer className=' flex justify-center items-center h-20 bg-gray-800 text-white'>
-          Esto es un footer
-        </footer>
+        <StackProvider app={stackClientApp}>
+          <StackTheme>{children}</StackTheme>
+        </StackProvider>
       </body>
     </html>
   );

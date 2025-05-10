@@ -1,5 +1,5 @@
 // ctrl + space en los corchetes y te salen todos los tipos de letras que hay en google fonts
-import { Montserrat, Lusitana } from "next/font/google";
+import { Montserrat, Lusitana,  } from "next/font/google";
 
 export const montserrat = Montserrat({
   subsets: ["latin"],
@@ -10,3 +10,5 @@ export const lusitana = Lusitana({
   subsets: ["latin"],
   weight: ["400", "700"],
 });
+
+export const helvetica = { }
