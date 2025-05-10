@@ -1,4 +1,4 @@
-export default function LoaderDots({ className = "h-5 w-5 mr-3 text-white" }) {
+export default function LoaderDots({ className = "h-5 w-5 mr-4 text-white" }) {
   return (
     <svg
       className={className}

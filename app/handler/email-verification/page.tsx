@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useUser } from "@stackframe/stack";
 import LoaderDots from "@/public/svg/LoaderDots";
-import { acceptTeamInvitation } from "@/app/lib/actions";
+import { getAcceptTeamInvitation } from "@/app/lib/actions";
 
 export default function EmailVerificationHandler() {
   const searchParams = useSearchParams();
@@ -29,7 +29,7 @@ export default function EmailVerificationHandler() {
     hasVerified.current = true;
 
     const verifyCode = async () => {
-      const res = await acceptTeamInvitation(code, token);
+      const res = await getAcceptTeamInvitation(code, token);
       if (res.success) {
         setStatus("success");
       } else {
@@ -54,7 +54,7 @@ export default function EmailVerificationHandler() {
       )}
       {status === "success" && (
         <div className="bg-white shadow-xl rounded-xl p-6 text-center max-w-xl w-full">
-          <h2 className="text-2xl font-semibold text-blue-600 mb-2">
+          <h2 className="text-2xl font-semibold text-green-600 mb-2">
             ¡Correo verificado correctamente!
           </h2>
           <p className="text-gray-500 my-6">

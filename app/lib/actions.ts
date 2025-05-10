@@ -5,6 +5,7 @@ import postgres from "postgres";
 import { string, z } from "zod";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { stackServerApp } from "@/stack";
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL;
 const FormSchema = z.object({
@@ -110,7 +111,61 @@ export async function deleteInvoice(id: string) {
 }
 
 // Api stack auth, funcional
-export async function acceptTeamInvitation(code: string, token: string) {
+export async function getUsersTeam(userId: string) {
+  try {
+    const selectedTeamId = await axios.get(
+      `${baseUrl}/api/usuarios/TeamId?user_id=${userId}`
+    );
+
+    const response = await axios.get(
+      `${baseUrl}/api/usuarios?teamId=${selectedTeamId.data.teamId}`
+    );
+
+    return response.data;
+  } catch (error: any) {
+    console.error(
+      "Error al obtener usuarios del equipo:",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+}
+
+export async function getTeamUserData(userId: string) {
+  try {
+    const selectedTeamId = await axios.get(
+      `${baseUrl}/api/usuarios/TeamId?user_id=${userId}`
+    );
+
+    const response = await axios.get(
+      `${baseUrl}/api/usuarios/TeamUserData?user_id=${selectedTeamId.data.teamId}`
+    );
+    return response.data;
+  } catch (error: any) {
+    console.error(
+      "Error al obtener el ID del equipo:",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+}
+
+export async function getTeamId(userId: string) {
+  try {
+    const response = await axios.get(
+      `${baseUrl}/api/usuarios/TeamId?user_id=${userId}`
+    );
+    return response.data;
+  } catch (error: any) {
+    console.error(
+      "Error al obtener el ID del equipo:",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+}
+
+export async function getAcceptTeamInvitation(code: string, token: string) {
   try {
     const res = await axios.post(
       `${baseUrl}/api/usuarios/TeamInvitation`,
@@ -132,23 +187,86 @@ export async function acceptTeamInvitation(code: string, token: string) {
     };
   }
 }
-// -------------------------
 
-// para ver los usuarios que pertenecen a un equipo
-export async function getUsersTeam(teamId: string) {
+export async function getMemberRole(
+  userId: string
+): Promise<"admin" | "member" | null> {
   try {
-    const response = await axios.get(
-      `${baseUrl}/api/usuarios?teamId=${teamId}`
+    const selectedTeamId = await axios.get(
+      `${baseUrl}/api/usuarios/TeamId?user_id=${userId}`
     );
-    return response.data;
+
+    const response = await axios.get(
+      `${baseUrl}/api/usuarios/TeamPermissions?teamId=${selectedTeamId.data.teamId}&user_id=${userId}`
+    );
+
+    const permissions = response.data.items;
+
+    if (!Array.isArray(permissions) || permissions.length === 0) {
+      return null;
+    }
+
+    const isAdmin = permissions.some((p) => p.id === "admin");
+    return isAdmin ? "admin" : "member";
   } catch (error: any) {
     console.error(
-      "Error al obtener usuarios del equipo:",
+      "Error al obtener rol del usuario:",
       error.response?.data || error.message
     );
     throw error;
   }
 }
+
+export async function pathEditUserTeam(
+  displayName: string,
+  imageProfile: string,
+  userId: string
+) {
+  try {
+    const selectedTeamId = await axios.get(
+      `${baseUrl}/api/usuarios/TeamId?user_id=${userId}`
+    );
+
+    const response = await axios.patch(
+      `${baseUrl}/api/usuarios/TeamUserUpdate?teamId=${selectedTeamId.data.teamId}&user_id=${userId}`,
+      {
+        display_name: displayName,
+        profile_image_url: imageProfile,
+      }
+    );
+
+    return response.data;
+  } catch (err: any) {
+    console.error("Error al verificar código:", err);
+    return {
+      success: false,
+      error: err.response?.data?.message || err.message,
+    };
+  }
+}
+
+export async function deleteUserTeam(userId: string) {
+  try {
+    const selectedTeamId = await axios.get(
+      `${baseUrl}/api/usuarios/TeamId?user_id=${userId}`
+    );
+
+    const response = await axios.delete(
+      `${baseUrl}/api/usuarios/TeamUserDelete?teamId=${selectedTeamId.data.teamId}&user_id=${userId}`
+    );
+
+    return response.data;
+  } catch (err: any) {
+    console.error("Error al verificar código:", err);
+    return {
+      success: false,
+      error: err.response?.data?.message || err.message,
+    };
+  }
+}
+
+// -------------------------
+
 // para ver los usuarios que han sido invitados a un equipo
 export async function getTeamInvitations(teamId: string) {
   try {

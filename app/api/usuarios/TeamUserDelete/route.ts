@@ -1,20 +1,17 @@
 import { NextResponse } from "next/server";
 import axios from "axios";
 
-export async function GET(request: Request) {
+export async function DELETE(request: Request) {
   const { searchParams } = new URL(request.url);
   const teamId = searchParams.get("teamId");
+  const userId = searchParams.get("user_id");
 
-  if (!teamId) {
-    return NextResponse.json({ error: "Team ID is required" }, { status: 400 });
-  }
-  
-  const apiUrl = `https://api.stack-auth.com/api/v1/team-member-profiles?team_id=${teamId}`;
+  const apiUrl = `https://api.stack-auth.com/api/v1/team-memberships/${teamId}/${userId}`;
   const projectId = process.env.NEXT_PUBLIC_STACK_PROJECT_ID!;
   const secretServerKey = process.env.STACK_SECRET_SERVER_KEY!;
 
   try {
-    const response = await axios.get(apiUrl, {
+    const response = await axios.delete(apiUrl, {
       headers: {
         "X-Stack-Access-Type": "server",
         "X-Stack-Project-Id": projectId,

@@ -4,25 +4,32 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useUser } from "@stackframe/stack";
 import TableUser from "@/app/components/TableUsers";
-import { getUsersTeam, getTeamInvitations, deleteTeamInvitation } from "@/app/lib/actions";
+import { getUsersTeam, getTeamId, getTeamUserData } from "@/app/lib/actions";
 import { TeamMembersSkeleton } from "@/app/ui/skeletons";
 
 export default function TeamManagementPanel() {
   const user = useUser();
-  const team = user?.selectedTeam;
+  let team = user?.selectedTeam;
 
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [dataTeam, setDataTeam] = useState<any[]>([]);
+  interface TeamData {
+    profile_image_url?: string;
+    display_name?: string;
+    id?: string;
+    created_at_millis?: number;
+  }
+
+  const [teamData, setTeamData] = useState<TeamData>({});
 
   const fetchUsers = async () => {
     try {
-      if (!team) {
-        console.error("No team selected.");
-        return;
-      }
-      const data = await getUsersTeam(team.id);
+      if (!user?.id) return;
+      const data = await getUsersTeam(user.id);
+      const responseTeam = await getTeamUserData(user.id);
+      setTeamData(responseTeam);
       setDataTeam(data.items);
     } catch (error) {
       console.error("Error al obtener usuarios del equipo:", error);
@@ -65,12 +72,12 @@ export default function TeamManagementPanel() {
             <Image
               width={28}
               height={28}
-              src={team?.profileImageUrl || "/default-team-logo.png"}
+              src={teamData?.profile_image_url || "/default-team-logo.png"}
               alt="Team Logo"
               className="object-cover rounded-md"
             />
             <span className="text-sm font-medium text-gray-900">
-              {team?.displayName || "Sin equipo"}
+              {teamData?.display_name || "Sin equipo"}
             </span>
           </div>
         </div>
