@@ -4,18 +4,17 @@ import { Metadata } from "next";
 import "./ui/global.css";
 
 export const metadata: Metadata = {
-  title: "Acme Dashboard",
-  description: "The official Next.js Course Dashboard, built with App Router.",
-  metadataBase: new URL("https://next-learn-dashboard.vercel.sh"),
+  title: "Goat Sport",
+  description: "Sitio oficial para organizar tus equipos.",
 };
 
 const stackClientApp = new StackClientApp({
   projectId: process.env.NEXT_PUBLIC_STACK_PROJECT_ID!,
   urls: {
-    afterSignUp: "/dashboard/profile", 
-    afterSignIn: "/dashboard", 
+    afterSignUp: "/dashboard/profile",
+    afterSignIn: "/dashboard",
   },
-  tokenStore: "nextjs-cookie", 
+  tokenStore: "nextjs-cookie",
 });
 
 export default function RootLayout({

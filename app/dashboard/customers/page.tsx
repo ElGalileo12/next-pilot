@@ -7,6 +7,13 @@ import TableUser from "@/app/components/TableUsers";
 import { getUsersTeam, getTeamId, getTeamUserData } from "@/app/lib/actions";
 import { TeamMembersSkeleton } from "@/app/ui/skeletons";
 
+interface TeamData {
+  profile_image_url?: string;
+  display_name?: string;
+  id?: string;
+  created_at_millis?: number;
+}
+
 export default function TeamManagementPanel() {
   const user = useUser();
   let team = user?.selectedTeam;
@@ -15,12 +22,6 @@ export default function TeamManagementPanel() {
   const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [dataTeam, setDataTeam] = useState<any[]>([]);
-  interface TeamData {
-    profile_image_url?: string;
-    display_name?: string;
-    id?: string;
-    created_at_millis?: number;
-  }
 
   const [teamData, setTeamData] = useState<TeamData>({});
 

@@ -1,22 +1,46 @@
 "use client";
+
 import Link from "next/link";
 import NavLinks from "@/app/ui/dashboard/nav-links";
-import AcmeLogo from "@/app/ui/acme-logo";
+import Image from "next/image";
 import { PowerIcon } from "@heroicons/react/24/outline";
 import { useUser } from "@stackframe/stack";
+import { getTeamUserData } from "@/app/lib/actions";
+import { useEffect, useState } from "react";
+
+interface TeamData {
+  profile_image_url?: string;
+  display_name?: string;
+  id?: string;
+  created_at_millis?: number;
+}
 
 export default function SideNav() {
   const user = useUser();
+  const [teamData, setTeamData] = useState<TeamData>({});
+
+  useEffect(() => {
+    if (!user?.id) return;
+    const fetchTeamData = async () => {
+      const response = await getTeamUserData(user.id);
+      setTeamData(response);
+    };
+    fetchTeamData();
+  }, [user?.id]);
+
   return (
     <div className="flex h-full flex-col px-3 py-4 md:px-2">
-      <Link
-        className="mb-2 flex h-20 items-end justify-start rounded-md bg-blue-600 p-4 md:h-40"
-        href="/"
-      >
+      <div className="mb-2 flex items-center justify-center rounded-md bg-gray-50 p-1.5">
         <div className="w-32 text-white md:w-40">
-          <AcmeLogo />
+          <Image
+            width={150}
+            height={150}
+            src={teamData?.profile_image_url || "/default-team-logo.png"}
+            alt="Team Logo"
+            className="object-cover rounded-md"
+          />
         </div>
-      </Link>
+      </div>
       <div className="flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2">
         <NavLinks />
         <div className="hidden h-auto w-full grow rounded-md bg-gray-50 md:block"></div>

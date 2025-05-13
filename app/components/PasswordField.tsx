@@ -2,6 +2,7 @@
 "use client";
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { LockClosedIcon } from "@heroicons/react/24/solid";
 
 type PasswordFieldProps = {
   value: string;
@@ -23,27 +24,24 @@ export default function PasswordField({
   return (
     <>
       <div className="relative">
-        <label
-          htmlFor={name}
-          className="block mb-2 text-sm font-medium text-gray-900"
-        >
-          {label}
-        </label>
+        <LockClosedIcon className="absolute w-5 h-5 text-sky-400 left-3 top-1/2 transform -translate-y-1/2" />
         <input
           type={showPassword ? "text" : "password"}
+          placeholder={label}
           name={name}
           id={name}
           value={value}
           onChange={onChange}
-           autoComplete="new-password"
-          className={`bg-gray-50 border ${
-            error ? "border-red-500" : "border-gray-300"
-          } text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 pr-10`}
+          autoComplete="new-password"
+          className={`w-full pl-10 pr-4 py-2 bg-sky-50 text-sky-800 rounded-full 
+          ${error ? "border-red-500" : "border-sky-200"} 
+          focus:outline-none focus:ring-2 focus:ring-sky-400 focus:border-transparent 
+          placeholder:text-sky-400`}
         />
         <button
           type="button"
           onClick={() => setShowPassword((prev) => !prev)}
-          className="absolute right-2 top-2/3 transform -translate-y-1/2 text-gray-500 hover:text-gray-800"
+          className="absolute right-4 top-1/2 transform -translate-y-1/2 text-sky-500 hover:text-sky-800"
           tabIndex={-1}
         >
           {showPassword ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
