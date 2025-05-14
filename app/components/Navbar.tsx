@@ -31,7 +31,7 @@ export default function Navbar() {
               Goat Sport
             </h1>
           </a>
-          <div className="flex items-center justify-evenly w-1/2">
+          <div className="flex items-center justify-around w-1/2">
             <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
               <Link
                 href={"/contact"}

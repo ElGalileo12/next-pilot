@@ -33,10 +33,10 @@ export default function PasswordField({
           value={value}
           onChange={onChange}
           autoComplete="new-password"
-          className={`w-full pl-10 pr-4 py-2 bg-sky-50 text-sky-800 rounded-full 
+          className={`w-full pl-10 pr-4 py-2 bg-sky-50 text-sky-800 rounded-md
           ${error ? "border-red-500" : "border-sky-200"} 
           focus:outline-none focus:ring-2 focus:ring-sky-400 focus:border-transparent 
-          placeholder:text-sky-400`}
+          placeholder:text-sky-800`}
         />
         <button
           type="button"

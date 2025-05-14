@@ -43,13 +43,13 @@ export default function TeamManagementPanel() {
 
   const handleInvite = async () => {
     if (!email) return setMessage("Debes ingresar un correo válido.");
-    if (!team) return setMessage("No estás en un equipo.");
+    //if (!team) return setMessage("No estás en un equipo.");
 
     try {
       setLoading(true);
       setMessage(null);
 
-      await team.inviteUser({
+      await team?.inviteUser({
         email,
         callbackUrl: `${window.location.origin}/auth/signup`,
       });

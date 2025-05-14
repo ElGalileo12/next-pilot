@@ -25,7 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${montserrat.className} antialiased`}>
-        <StackProvider app={stackClientApp}>
+        <StackProvider lang={"es-ES"} app={stackClientApp}>
           <StackTheme>{children}</StackTheme>
         </StackProvider>
       </body>

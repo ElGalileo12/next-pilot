@@ -4,6 +4,7 @@ import { useState } from "react";
 import PasswordField from "@/app/components/PasswordField";
 import Link from "next/link";
 import { UserIcon } from "@heroicons/react/24/solid";
+import Image from "next/image";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -54,9 +55,9 @@ export default function LoginPage() {
                 type="email"
                 autoComplete="email"
                 value={email}
-                placeholder="Email"
+                placeholder="Correo electrónico"
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 rounded-full bg-sky-50 border border-sky-200 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-sky-400 text-sky-800 placeholder:text-sky-400"
+                className="w-full pl-10 pr-4 py-2 rounded-md bg-sky-50 border border-sky-200 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-sky-400 text-sky-800 placeholder:text-sky-800"
               />
             </div>
 
@@ -77,19 +78,40 @@ export default function LoginPage() {
             </div>
 
             <button
+              type="button"
+              className="flex items-center justify-center w-full max-w-sm px-4 py-2 border rounded-md shadow-sm bg-white hover:bg-gray-100 transition"
+              onClick={async () => {
+                await app.signInWithOAuth("google");
+              }}
+            >
+              <Image
+                src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg"
+                alt="Google logo"
+                width={20}
+                height={20}
+                className="mr-2"
+              />
+              <span className="text-sm text-gray-800 font-medium">
+                Iniciar sesión con Google
+              </span>
+            </button>
+
+            <button
               type="submit"
-              className="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-2 rounded-full transition"
+              className="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-2 rounded-md transition"
             >
               Iniciar sesión
             </button>
 
-            <div className="text-sm mt-2">
-              <Link href="/auth/signup" className="text-sm mt-2">
-                <span className="text-sky-800 hover:underline">
-                  Crear una cuenta
-                </span>
+            <p className="text-sm font-light text-sky-800">
+              ¿Aún no tienes una cuenta?{" "}
+              <Link
+                href="/auth/signup"
+                className="text-sky-500 hover:underline"
+              >
+                Registrate
               </Link>
-            </div>
+            </p>
           </form>
         </div>
       </section>
