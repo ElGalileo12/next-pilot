@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import PasswordField from "@/app/components/PasswordField";
 import Link from "next/link";
 import { useStackApp } from "@stackframe/stack";
@@ -12,6 +13,8 @@ export default function CustomCredentialSignIn() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const app = useStackApp();
 
   const onSubmit = async () => {
@@ -24,6 +27,15 @@ export default function CustomCredentialSignIn() {
     const result = await app.signUpWithCredential({ email, password });
     if (result.status === "error") setError(result.error.message);
   };
+
+  useEffect(() => {
+    const code = searchParams.get("code");
+    if (code) {
+      document.cookie = `invitation_code=${code}; path=/; max-age=${
+        60 * 10
+      }; SameSite=Strict`;
+    }
+  }, [searchParams]);
 
   return (
     <>
@@ -63,44 +75,7 @@ export default function CustomCredentialSignIn() {
               />
             </div>
 
-            <PasswordField
-              label="Contraseña"
-              name="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-
-            <PasswordField
-              label="Confirmar contraseña"
-              name="confirmPassword"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              error={
-                password !== confirmPassword
-                  ? "Las contraseñas no coinciden"
-                  : undefined
-              }
-            />
-
             {error && <p className="text-red-600 text-base">{error}</p>}
-            <button
-              type="button"
-              className="flex items-center justify-center w-full max-w-sm px-4 py-2 border rounded-md shadow-sm bg-white hover:bg-gray-100 transition"
-              onClick={async () => {
-                await app.signInWithOAuth("google");
-              }}
-            >
-              <Image
-                src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg"
-                alt="Google logo"
-                width={20}
-                height={20}
-                className="mr-2"
-              />
-              <span className="text-sm text-gray-800 font-medium">
-                Registrate con Google
-              </span>
-            </button>
 
             <button
               type="submit"

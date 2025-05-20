@@ -6,6 +6,6 @@ export const stackServerApp = new StackServerApp({
   tokenStore: "nextjs-cookie",
   urls: {
     signIn: "/auth/signin",
-    handler: "/auth/verificationTeam",
+    // handler: "/auth/verificationTeam",
   },
 });

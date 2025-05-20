@@ -1,5 +1,6 @@
 "use server";
 
+import { cookies } from "next/headers";
 import axios from "axios";
 import postgres from "postgres";
 import { string, z } from "zod";
@@ -188,19 +189,44 @@ export async function getAcceptTeamInvitation(code: string, token: string) {
   }
 }
 
+export async function getTeamInvitation(code: {}) {
+  try {
+    const res = await axios.post(
+      `${baseUrl}/api/usuarios/TeamUserInvitation`,
+      { code },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return { success: true, data: res.data };
+  } catch (err: any) {
+    console.error("Error al verificar código:", err);
+    return {
+      success: false,
+      error: err.response?.data?.message || err.message,
+    };
+  }
+}
+
 export async function getMemberRole(
   userId: string
 ): Promise<"admin" | "member" | null> {
   try {
-    const selectedTeamId = await axios.get(
+    const { data: teamRes } = await axios.get(
       `${baseUrl}/api/usuarios/TeamId?user_id=${userId}`
     );
 
-    const response = await axios.get(
-      `${baseUrl}/api/usuarios/TeamPermissions?teamId=${selectedTeamId.data.teamId}&user_id=${userId}`
+    const teamId = teamRes?.teamId;
+    if (!teamId) return null;
+
+    const { data: permissionsRes } = await axios.get(
+      `${baseUrl}/api/usuarios/TeamPermissions?teamId=${teamId}&user_id=${userId}`
     );
 
-    const permissions = response.data.items;
+    const permissions = permissionsRes?.items;
 
     if (!Array.isArray(permissions) || permissions.length === 0) {
       return null;
@@ -208,12 +234,9 @@ export async function getMemberRole(
 
     const isAdmin = permissions.some((p) => p.id === "admin");
     return isAdmin ? "admin" : "member";
-  } catch (error: any) {
-    console.error(
-      "Error al obtener rol del usuario:",
-      error.response?.data || error.message
-    );
-    throw error;
+  } catch (error) {
+    console.error("Error al obtener el rol del miembro:", error);
+    return null;
   }
 }
 
@@ -265,7 +288,12 @@ export async function deleteUserTeam(userId: string) {
   }
 }
 
-// -------------------------
+// Codigo de verificación user
+export async function getLocalCode() {
+  const cookieStore = await cookies();
+  const code = cookieStore.get("invitation_code")?.value;
+  return code ?? null;
+}
 
 // para ver los usuarios que han sido invitados a un equipo
 export async function getTeamInvitations(teamId: string) {

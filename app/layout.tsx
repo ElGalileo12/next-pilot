@@ -11,8 +11,8 @@ export const metadata: Metadata = {
 const stackClientApp = new StackClientApp({
   projectId: process.env.NEXT_PUBLIC_STACK_PROJECT_ID!,
   urls: {
-    afterSignUp: "/dashboard/profile",
-    afterSignIn: "/dashboard",
+    afterSignUp: "/verificationUser",
+    afterSignIn: "/verificationUser",
   },
   tokenStore: "nextjs-cookie",
 });

@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
         "X-Stack-Access-Type": "client",
         "X-Stack-Project-Id": idProject,
         "X-Stack-Publishable-Client-Key": idClientKey,
-        "x-stack-access-token": accessToken!, // Aquí envías el token
+        "x-stack-access-token": accessToken!,
       },
       body: JSON.stringify({ code }),
     }

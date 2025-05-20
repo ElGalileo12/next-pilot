@@ -21,10 +21,17 @@ export async function GET(request: Request) {
 
     return NextResponse.json(response.data);
   } catch (error: any) {
+    const message = error.response?.data?.error;
+
+    if (message === "No team found") {
+      return NextResponse.json({ role: null, message: "User not in team" });
+    }
+
     console.error(
       "Error al obtener los miembros:",
       error.response?.data || error.message
     );
+
     return NextResponse.json(
       { error: "Error al obtener los miembros", details: error.response?.data },
       { status: 500 }

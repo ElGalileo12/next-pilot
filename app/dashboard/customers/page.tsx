@@ -4,7 +4,11 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useUser } from "@stackframe/stack";
 import TableUser from "@/app/components/TableUsers";
-import { getUsersTeam, getTeamId, getTeamUserData } from "@/app/lib/actions";
+import {
+  getUsersTeam,
+  getTeamInvitation,
+  getTeamUserData,
+} from "@/app/lib/actions";
 import { TeamMembersSkeleton } from "@/app/ui/skeletons";
 
 interface TeamData {
@@ -16,21 +20,19 @@ interface TeamData {
 
 export default function TeamManagementPanel() {
   const user = useUser();
-  let team = user?.selectedTeam;
 
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [dataTeam, setDataTeam] = useState<any[]>([]);
-
-  const [teamData, setTeamData] = useState<TeamData>({});
+  const [infoTeam, setInfoTeam] = useState<TeamData>({});
 
   const fetchUsers = async () => {
     try {
       if (!user?.id) return;
       const data = await getUsersTeam(user.id);
       const responseTeam = await getTeamUserData(user.id);
-      setTeamData(responseTeam);
+      setInfoTeam(responseTeam);
       setDataTeam(data.items);
     } catch (error) {
       console.error("Error al obtener usuarios del equipo:", error);
@@ -43,16 +45,19 @@ export default function TeamManagementPanel() {
 
   const handleInvite = async () => {
     if (!email) return setMessage("Debes ingresar un correo válido.");
-    //if (!team) return setMessage("No estás en un equipo.");
+    if (!infoTeam) return setMessage("No estás en un equipo.");
+
+    const code = {
+      team_id: infoTeam.id,
+      email: email,
+      callback_url: "http://localhost:3000/auth/signup",
+    };
 
     try {
       setLoading(true);
       setMessage(null);
-
-      await team?.inviteUser({
-        email,
-        callbackUrl: `${window.location.origin}/auth/signup`,
-      });
+      const resposeInvitation = await getTeamInvitation(code);
+      console.log(resposeInvitation);
 
       setMessage("Invitación enviada correctamente.");
       setEmail("");
@@ -73,12 +78,12 @@ export default function TeamManagementPanel() {
             <Image
               width={28}
               height={28}
-              src={teamData?.profile_image_url || "/default-team-logo.png"}
+              src={infoTeam?.profile_image_url || "/default-team-logo.png"}
               alt="Team Logo"
               className="object-cover rounded-md"
             />
             <span className="text-sm font-medium text-gray-900">
-              {teamData?.display_name || "Sin equipo"}
+              {infoTeam?.display_name || "Sin equipo"}
             </span>
           </div>
         </div>
@@ -89,7 +94,8 @@ export default function TeamManagementPanel() {
           Invitar usuario al equipo
         </h2>
         <p className="mb-2 text-sm text-gray-600">
-          Equipo seleccionado: <strong>{team?.displayName || "Ninguno"}</strong>
+          Equipo seleccionado:{" "}
+          {/*     <strong>{dataTeam.display_name || "Ninguno"}</strong> */}
         </p>
         <input
           type="email"
